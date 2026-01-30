@@ -467,6 +467,116 @@ document.addEventListener('DOMContentLoaded', () => {
         return floorData?.name || `Floor ${floorNum}`;
     }
 
+    // ✅ ADD THIS FUNCTION to handle auto-expanding route box
+function updateRouteBoxHeight() {
+    const routeSteps = document.getElementById('routeSteps');
+    if (!routeSteps) return;
+    
+    // Reset to minimum height first
+    routeSteps.style.minHeight = '120px';
+    
+    // Calculate content height
+    const contentHeight = routeSteps.scrollHeight;
+    
+    // Set new minimum height (with some padding)
+    const newHeight = Math.min(Math.max(contentHeight, 120), 400); // Min 120px, Max 400px
+    routeSteps.style.minHeight = `${newHeight}px`;
+    
+    // Add smooth transition
+    routeSteps.style.transition = 'min-height 0.3s ease';
+    
+    console.log('Route box height updated:', newHeight, 'px');
+}
+
+// ✅ UPDATE THE findRoute FUNCTION - Add after setting routeSteps.innerHTML:
+/* function findRoute() {
+    const from = fromSelect?.value;
+    const to = toSelect?.value;
+    if (!from || !to) {
+        routeSteps.innerHTML = '<p class="text-gray-400">Select both start and destination</p>';
+        qrcodeDiv.innerHTML = '<p class="text-gray-400 text-sm">Route QR appears here</p>';
+        
+        // Clear any existing highlighting
+        currentPath = [];
+        highlightCurrentPathOnFloor();
+        
+        // Update route box height
+        setTimeout(updateRouteBoxHeight, 10);
+        return;
+    }
+
+    const path = findShortestPath(from, to);
+    if (!path || path.length === 0) {
+        routeSteps.innerHTML = '<p class="text-red-600">No path found between these locations.</p>';
+        qrcodeDiv.innerHTML = '<p class="text-gray-400 text-sm">No route available</p>';
+        
+        // Clear any existing highlighting
+        currentPath = [];
+        highlightCurrentPathOnFloor();
+        
+        // Update route box height
+        setTimeout(updateRouteBoxHeight, 10);
+        return;
+    }
+
+    // Store the current path
+    currentPath = path;
+    
+    const directions = generateDirections(path);
+    let stepsHtml = '<ol class="list-decimal pl-5 space-y-2">'; // ✅ Added more spacing
+    directions.forEach(step => {
+        stepsHtml += `<li class="py-1">${step}</li>`; // ✅ Added padding to each step
+    });
+    stepsHtml += '</ol>';
+    routeSteps.innerHTML = stepsHtml;
+
+    // Highlight the path on the map
+    highlightCurrentPathOnFloor();
+
+    // ✅ Update route box height after content is rendered
+    setTimeout(updateRouteBoxHeight, 50);
+
+    // ✅ QR Code generation with Cloud URL
+    const url = generateShareableUrl(from, to);
+    
+    qrcodeDiv.innerHTML = '';
+    
+    try {
+        const typeNumber = 0;
+        const errorCorrectionLevel = 'M';
+        const qr = qrcode(typeNumber, errorCorrectionLevel);
+        qr.addData(url);
+        qr.make();
+        const svgTag = qr.createSvgTag(4, 8);
+        
+        const container = document.createElement('div');
+        container.className = 'flex flex-col items-center';
+        container.innerHTML = `
+            ${svgTag}
+            <div class="mt-3 text-center">
+                <p class="text-xs text-gray-600 mb-1">Scan to view route</p>
+                <p class="text-xs text-green-600 font-medium">
+                    ✅ Includes hotel data
+                </p>
+                <p class="text-xs text-blue-600 mt-1">
+                    ${url.split('?')[0]}
+                </p>
+            </div>
+        `;
+        
+        qrcodeDiv.appendChild(container);
+        
+    } catch (e) {
+        console.error("QR Error:", e);
+        qrcodeDiv.innerHTML = `
+            <div class="text-center p-4 border border-red-200 rounded">
+                <p class="text-red-500 text-sm mb-2">QR generation failed</p>
+                <p class="text-xs text-gray-500 break-all">${url.substring(0, 100)}...</p>
+            </div>
+        `;
+    }
+} */
+
     function findRoute() {
         const from = fromSelect?.value;
         const to = toSelect?.value;
@@ -522,4 +632,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
 
